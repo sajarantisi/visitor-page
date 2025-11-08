@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="robots" content="noindex,nofollow" />
+  <title>Visitor</title>
+  <style>
+    html, body {height:100%; margin:0;}
+    body {
+      display:flex; align-items:center; justify-content:center;
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans Arabic", Arial, sans-serif;
+      background:#fff; color:#0b3d91; /* أزرق هادئ */
+    }
+    .wrap { text-align:center; padding:24px; max-width:90ch; }
+    .label { font-size:1rem; color:#777; margin-bottom:8px; }
+    .name  { font-size: clamp(2rem, 8vw, 5rem); font-weight:800; letter-spacing:.5px; }
+    .sub   { margin-top:8px; font-size:1.1rem; color:#555; }
+    .hint  { margin-top:18px; font-size:.9rem; color:#9aa; }
+  </style>
+</head>
+<body>
+  <div class="wrap" id="app">
+    <div class="label">Visitor</div>
+    <div class="name" id="name">Visitor</div>
+    <div class="sub" id="extra"></div>
+    <div class="hint" id="hint">امسح رمز QR الصحيح لعرض الاسم/الرقم.</div>
+  </div>
+
+  <script>
+    // قراءة القيم من باراميترات الرابط
+    const p = new URLSearchParams(location.search);
+
+    // يدعم ?name= و/أو ?id=
+    const rawName = p.get("name") || "";
+    const rawId   = p.get("id")   || "";
+
+    // تنظيف بسيط لمنع إدخال أكواد HTML
+    const sanitize = s => (s || "").toString().replace(/[<>&]/g, c => ({
+      "<":"&lt;", ">":"&gt;", "&":"&amp;"
+    }[c]));
+
+    const name = sanitize(rawName).trim();
+    const id   = sanitize(rawId).trim();
+
+    // عرض القيم
+    const nameEl  = document.getElementById("name");
+    const extraEl = document.getElementById("extra");
+    const hintEl  = document.getElementById("hint");
+
+    if (name || id) {
+      nameEl.textContent = name || (id ? `Visitor (${id})` : "Visitor");
+      extraEl.textContent = (name && id) ? `المعرف: ${id}` : "";
+      hintEl.textContent = ""; // إخفاء التلميح عند توفر بيانات
+      document.title = name ? name : `Visitor ${id}`;
+    } else {
+      nameEl.textContent = "لا توجد بيانات";
+      extraEl.textContent = "";
+    }
+  </script>
+</body>
+</html>
